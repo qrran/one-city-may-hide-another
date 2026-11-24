@@ -1,0 +1,39 @@
+{
+  "duration": 172,
+  "fps": 24,
+  "shots": [
+    {"id":"opening","start":0,"end":15},
+    {"id":"window","start":15,"end":28},
+    {"id":"corner1","start":28,"end":42},
+    {"id":"entry1","start":42,"end":56},
+    {"id":"notebook","start":56,"end":69},
+    {"id":"rail2","start":69,"end":85},
+    {"id":"corner2","start":85,"end":101},
+    {"id":"cup","start":101,"end":118},
+    {"id":"entry2","start":118,"end":135},
+    {"id":"hand","start":135,"end":147},
+    {"id":"lastRail","start":147,"end":162},
+    {"id":"credits","start":162,"end":172}
+  ],
+  "lines":[
+    [10.8,"On my way uptown, I count the doors."],
+    [16.1,"The window keeps my face for a while."],
+    [22.2,"I can tell how late I am by the roofs."],
+    [29.3,"At the coffee cart, I watch the light across the street."],
+    [37.5,"When it changes, I go."],
+    [43.6,"At the top of the steps, the brass door is open."],
+    [51.0,"Lucky, I think."],
+    [58.0,"In my notebook the whole trip fits on one line."],
+    [64.0,"Brooklyn. Then class."],
+    [76.0,"What did I put in the space between those words?"],
+    [86.0,"Same corner. Same light."],
+    [96.0,"There it is again."],
+    [103.0,"A spoon touches the rim. Twice."],
+    [112.0,"There's another cup behind the one I took."],
+    [119.6,"The door hangs open for the length of a breath."],
+    [129.1,"Someone's hand is still on the other side."],
+    [139.2,"I remember the brass. I don't remember the hand."],
+    [149.4,"If you ask how long it takes to get here,"],
+    [155.2,"give me a minute."]
+  ]
+}
