@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101a18">
+  <meta name="description" content="Watch Dan Lin’s New York poetry film, then shift your viewpoint on the two trains in its interactive Brooklyn railway. A response to Kenneth Koch.">
+  <title>One City May Hide Another — A film by Dan Lin</title>
+  <link rel="icon" href="assets/mark.png">
+  <link rel="preload" as="image" href="assets/cover.webp">
+  <link rel="preload" as="font" type="font/woff" href="assets/display.woff" crossorigin>
+  <link rel="stylesheet" href="screen.css">
+  <script type="module" src="screen.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to film</a>
+  <header class="mast">
+    <div class="wrap mast-inner">
+      <a class="brand" href="#film" aria-label="Dan Lin, return to the film"><span class="emblem" aria-hidden="true"><i></i><i></i></span><span>Dan Lin</span></a>
+      <nav aria-label="Main navigation">
+        <a href="#film">Film</a><a href="#railway">Rail study</a><a href="#reading">Reading</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="cover" id="film" aria-labelledby="title">
+      <div class="poster-art" aria-hidden="true"></div>
+      <div class="cover-shade" aria-hidden="true"></div>
+      <div class="wrap cover-inner">
+        <p class="overline"><span class="rule"></span>A New York poetry film</p>
+        <h1 id="title"><span>One City</span><span>May Hide</span><em>Another</em></h1>
+        <p class="logline">One morning from Brooklyn to class, seen twice.</p>
+        <div class="cover-actions">
+          <a class="watch" href="assets/one-city-web.mp4" data-film-time="0"><i class="play-shape" aria-hidden="true"></i>Watch the film <span class="runtime">2:52</span></a>
+          <a class="study-link" href="#railway">Explore the railway</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="scenes wrap" id="scenes" aria-labelledby="scenes-title">
+      <div class="section-line">
+        <h2 id="scenes-title">Scenes to revisit</h2>
+        <p>Choose a moment to start the film.</p>
+      </div>
+      <div class="scene-grid">
+        <a class="scene" href="assets/one-city-web.mp4#t=0" data-film-time="0" aria-label="Play The elevated line from 0:00">
+          <div class="still"><img src="assets/scene-trains.jpg" width="800" height="450" alt="Two silver trains sharing the elevated tracks"><span class="mini-play" aria-hidden="true"><i class="play-shape"></i></span></div>
+          <div class="caption-line"><h3>The elevated line</h3><span class="timecode">00:00</span></div>
+        </a>
+        <a class="scene" href="assets/one-city-web.mp4#t=28" data-film-time="28" aria-label="Play The coffee cart from 0:28">
+          <div class="still"><img src="assets/scene-cart.jpg" width="800" height="450" alt="A striped coffee cart beneath Broadway apartment windows"><span class="mini-play" aria-hidden="true"><i class="play-shape"></i></span></div>
+          <div class="caption-line"><h3>The coffee cart</h3><span class="timecode">00:28</span></div>
+        </a>
+        <a class="scene" href="assets/one-city-web.mp4#t=118" data-film-time="118" aria-label="Play The brass door from 1:58">
+          <div class="still"><img src="assets/scene-door.jpg" width="800" height="450" alt="A hand resting against the brass door"><span class="mini-play" aria-hidden="true"><i class="play-shape"></i></span></div>
+          <div class="caption-line"><h3>The brass door</h3><span class="timecode">01:58</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="railway" id="railway" aria-labelledby="rail-title">
+      <div class="wrap">
+        <div class="rail-heading"><div><p class="eyebrow">Interactive rail study</p><h2 id="rail-title">Between the trains</h2></div><p>The near train can hide a whole second train. Shift your viewpoint as they pass and see when it comes into sight.</p></div>
+        <div class="rail-panel">
+          <div class="rail-stage" id="rail-stage">
+            <img id="rail-poster" src="assets/rail-poster.jpg" width="1600" height="900" loading="lazy" alt="A pair of elevated trains in Brooklyn">
+            <canvas id="rail-canvas" tabindex="0" hidden aria-label="Interactive Brooklyn railway. Drag horizontally or use the left and right arrow keys to shift the camera."></canvas>
+            <div id="rail-fallback" class="rail-fallback" tabindex="0" role="group" hidden aria-label="Railway camera angles. Drag horizontally or use the left and right arrow keys to change viewpoint."><video id="rail-footage" preload="none" playsinline muted loop aria-hidden="true"></video></div>
+          </div>
+          <div class="rail-controls" id="rail-controls" hidden>
+            <button id="rail-play" type="button" aria-pressed="false"><i class="play-shape" aria-hidden="true"></i><span>Play trains</span></button>
+            <div class="rail-time"><label class="sr-only" for="rail-time">Railway sequence time, seconds</label><input id="rail-time" type="range" min="0" max="22" step=".05" value="5.5"><output id="rail-clock" for="rail-time">5.5 / 22 s</output></div>
+            <div id="look-control" class="look"><label for="rail-look">Viewpoint</label><input id="rail-look" type="range" min="-1" max="1" step=".01" value="0"></div>
+          </div>
+        </div>
+        <p class="rail-hint" id="rail-hint">Drag the scene or use the arrow keys to shift your view.</p>
+        <noscript><p><a href="assets/one-city-web.mp4#t=69">Watch the railway sequence in the film</a></p></noscript>
+      </div>
+    </section>
+    <section class="reading" id="reading" aria-labelledby="reading-title">
+      <div class="wrap reading-grid">
+        <div class="reading-head"><p class="eyebrow">Director’s note</p><h2 id="reading-title">A pause in<br>the line.</h2><p class="signature">Dan Lin</p></div>
+        <div class="reading-copy">
+          <p>In Kenneth Koch’s <cite>One Train May Hide Another</cite>, the phrase “at least” breaks across two lines. I have to wait for the next line to finish even that small thought. I wanted to give a New York commute that same extra beat.</p>
+          <p>The spoon taps twice on both visits to the coffee cart. The first time through, I’m watching the crossing light. On the second pass I can hear what the vendor is doing. At the brass door, I’ve already called it luck by the time I notice someone’s hand.</p>
+          <p>I can go back and look at the hand. I still couldn’t tell you who held the door. That feels true to being in a city full of people I depend on for a moment and may never see again.</p>
+          <a class="ink-link" href="https://poets.org/poem/one-train-may-hide-another">Read Kenneth Koch’s poem</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><span>One City May Hide Another <i>/</i> Dan Lin</span><div><a href="https://github.com/qrran/one-city-may-hide-another/releases/tag/v1.0.0">Download 1080p film</a><a href="https://github.com/qrran/one-city-may-hide-another">Source on GitHub</a></div></div></footer>
+  <dialog id="screening" aria-labelledby="screen-title">
+    <div class="screen-shell">
+      <div class="screen-head"><h2 id="screen-title">One City May Hide Another</h2><button id="close-screen" type="button" aria-label="Close screening">Close <i aria-hidden="true">×</i></button></div>
+      <video id="movie" controls playsinline preload="none" poster="assets/rail-poster.jpg" aria-label="One City May Hide Another, a poetry film by Dan Lin">
+        <source src="assets/one-city-web.mp4" type="video/mp4">
+        <track kind="captions" srclang="en" label="English CC" src="assets/captions.vtt">
+      </video>
+      <div class="screen-foot"><span>Dan Lin <i>/</i> 2 min 52 sec</span><a href="https://github.com/qrran/one-city-may-hide-another/releases/tag/v1.0.0">Download 1080p film</a></div>
+      <p id="film-status" role="status" hidden></p>
+    </div>
+  </dialog>
+</body>
+</html>
