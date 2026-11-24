@@ -137,3 +137,9 @@ body.screen-open{overflow:hidden}
 @media(max-width:350px){nav{gap:.72rem}.cover-actions{gap:.72rem}.cover-inner{min-height:32.5rem}}
 @media(max-height:530px) and (orientation:landscape){dialog{width:min(85vw,150dvh)}.screen-head,.screen-foot{padding-block:.25rem}#movie{max-height:65dvh}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.scene img{transition:none}}
+
+.reading-subhead{font-size:clamp(1.55rem,2.8vw,2.35rem);margin:2.1rem 0 .8rem;color:#1b3027;letter-spacing:-.055em}
+
+.reprise{display:flex;gap:.6rem;flex-wrap:wrap;margin:-.1rem 0 1.35rem}
+.reprise a{border:1px solid #7d8974;color:#233c30;font:600 .82rem/1.5 var(--mono);padding:.4rem .7rem}
+.reprise a:hover{background:#d8dac9}

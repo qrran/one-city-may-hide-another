@@ -1,40 +1,113 @@
 const dialog = document.querySelector('#screening');
 const movie = document.querySelector('#movie');
 const filmStatus = document.querySelector('#film-status');
-let startAt = 0;
+const filmPath = 'assets/one-city-web.mp4';
 let opener;
+let session = 0;
+let storedMovie;
+let rangeCapability;
 
-function positionMovie() {
-  if (movie.readyState >= 1) movie.currentTime = startAt;
+async function localMedia(path) {
+  const response = await fetch(path);
+  if (!response.ok) throw new Error('Media download failed.');
+  const bytes = await response.blob();
+  return URL.createObjectURL(new Blob([bytes], {type:'video/mp4'}));
 }
 
-movie.addEventListener('loadedmetadata', positionMovie);
-movie.addEventListener('error', () => {
-  filmStatus.textContent = 'This browser could not play the video. The 1080p download is available below the player.';
-  filmStatus.hidden = false;
-});
+function fileCanSeek() {
+  rangeCapability ??= fetch(filmPath, {method:'HEAD'})
+    .then(response => /bytes/i.test(response.headers.get('Accept-Ranges') || ''))
+    .catch(() => false);
+  return rangeCapability;
+}
+
+function mediaEvent(element, name, timeout, action) {
+  return new Promise((resolve, reject) => {
+    const finish = ok => {
+      clearTimeout(timer);
+      element.removeEventListener(name, success);
+      element.removeEventListener('error', failure);
+      if (ok) resolve();
+      else reject(new Error('Media did not become ready.'));
+    };
+    const success = () => finish(true);
+    const failure = () => finish(false);
+    const timer = setTimeout(failure, timeout);
+    element.addEventListener(name, success, {once:true});
+    element.addEventListener('error', failure, {once:true});
+    try { action?.(); } catch { failure(); }
+  });
+}
+
+async function selectSource(src, ticket) {
+  if (ticket !== session) return false;
+  const absolute = new URL(src, document.baseURI).href;
+  if (movie.currentSrc !== absolute || movie.readyState < 1) {
+    await mediaEvent(movie, 'loadedmetadata', 18000, () => {
+      movie.src = absolute;
+      movie.load();
+    });
+  }
+  return ticket === session;
+}
+
+async function seekMovie(target, ticket) {
+  if (ticket !== session) return false;
+  if (Math.abs(movie.currentTime - target) <= .35) return true;
+  await mediaEvent(movie, 'seeked', 3000, () => { movie.currentTime = target; });
+  return ticket === session && Math.abs(movie.currentTime - target) <= .35;
+}
+
+async function openFilm(target, ticket) {
+  const current = () => ticket === session && dialog.open;
+  const status = message => {
+    if (!current()) return;
+    filmStatus.textContent = message;
+    filmStatus.hidden = false;
+  };
+  const cached = () => {
+    storedMovie ??= localMedia(filmPath).catch(error => { storedMovie = undefined; throw error; });
+    return storedMovie;
+  };
+  try {
+    if (target > 0) status('Opening the selected scene…');
+    let src = filmPath;
+    if (storedMovie || (target > 0 && !await fileCanSeek())) src = await cached();
+    if (!current() || !await selectSource(src, ticket)) return;
+    let positioned = false;
+    try { positioned = await seekMovie(target, ticket); } catch { /* A server can advertise ranges without honoring a seek. */ }
+    if (!current()) return;
+    if (!positioned) {
+      src = await cached();
+      if (!await selectSource(src, ticket)) return;
+      if (!await seekMovie(target, ticket)) throw new Error('Chapter unavailable.');
+    }
+    if (!current()) return;
+    filmStatus.hidden = true;
+    try { await movie.play(); }
+    catch { status('Press play in the video controls to begin.'); }
+  } catch {
+    status('The video could not load. You can download the 1080p film below the player.');
+  }
+}
 
 for (const link of document.querySelectorAll('[data-film-time]')) {
   link.addEventListener('click', event => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || typeof dialog.showModal !== 'function') return;
     event.preventDefault();
     opener = link;
-    startAt = Number(link.dataset.filmTime);
+    movie.pause();
     filmStatus.hidden = true;
     dialog.showModal();
     document.body.classList.add('screen-open');
     document.querySelector('#close-screen').focus({preventScroll:true});
-    positionMovie();
-    movie.play().catch(() => {
-      if (!dialog.open || movie.error) return;
-      filmStatus.textContent = 'Press play in the video controls to begin.';
-      filmStatus.hidden = false;
-    });
+    openFilm(Number(link.dataset.filmTime), ++session);
   });
 }
 document.querySelector('#close-screen').addEventListener('click', () => dialog.close());
 dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
 dialog.addEventListener('close', () => {
+  session++;
   movie.pause();
   document.body.classList.remove('screen-open');
   opener?.focus({preventScroll:true});
@@ -112,7 +185,7 @@ function resizeRail() {
   world.resize(Math.max(1, Math.round(width*scale)), Math.max(1, Math.round(height*scale)));
   drawRail();
 }
-function useRenderedRail() {
+async function useRenderedRail() {
   if (usingFootage) return;
   usingFootage = true;
   world?.dispose();
@@ -143,8 +216,12 @@ function useRenderedRail() {
     poster.hidden = false;
     hint.textContent = 'The railway could not load. The elevated line also opens the full film.';
   });
-  footage.src = 'assets/rail-angles.mp4';
-  footage.load();
+  try {
+    footage.src = await localMedia('assets/rail-angles.mp4');
+    footage.load();
+  } catch {
+    hint.textContent = 'The railway video could not load. The elevated line also opens the full film.';
+  }
 }
 async function initializeRail() {
   if (initializing) return;
