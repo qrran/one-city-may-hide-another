@@ -109,6 +109,8 @@ body.screen-open{overflow:hidden}
 .screen-head button{display:inline-flex;gap:.6rem;align-items:center;min-height:2.55rem;background:transparent;color:var(--paper);font-size:.93rem}
 .screen-head i{font:normal 1.5rem/1 var(--sans)}
 #movie{display:block;width:100%;height:auto;max-height:74dvh;aspect-ratio:16/9;background:#000}
+.film-position{font-variant-numeric:tabular-nums}
+#film-status a{text-decoration:underline;text-underline-offset:.2em}
 #film-status{padding:0 1.15rem 1rem;color:#e9bd9c}
 @media(min-width:1650px){.cover-inner{min-height:46rem}}
 @media(max-width:800px){

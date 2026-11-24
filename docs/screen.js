@@ -1,11 +1,94 @@
 const dialog = document.querySelector('#screening');
 const movie = document.querySelector('#movie');
+const title = document.querySelector('#screen-title');
+const clock = document.querySelector('#film-clock');
 const filmStatus = document.querySelector('#film-status');
-const filmPath = 'assets/one-city-web.mp4';
+const directLink = document.querySelector('#scene-file');
+const closeButton = document.querySelector('#close-screen');
 let opener;
-let session = 0;
-let storedMovie;
-let rangeCapability;
+let filmOffset = 0;
+let selection = 0;
+let captionsEnabled;
+
+function showFilmTime(elapsed) {
+  const total = Math.floor(filmOffset + elapsed);
+  const minutes = Math.floor(total / 60);
+  clock.textContent = minutes + ':' + String(total % 60).padStart(2, '0');
+}
+
+function showFilmStatus(message) {
+  filmStatus.querySelector('span').textContent = message;
+  filmStatus.hidden = false;
+}
+
+function setCaptions(path) {
+  const track = document.createElement('track');
+  track.kind = 'captions';
+  track.srclang = 'en';
+  track.label = 'English CC';
+  track.src = path;
+  if (captionsEnabled !== undefined) track.default = captionsEnabled;
+  movie.replaceChildren(track);
+  if (captionsEnabled !== undefined) track.track.mode = captionsEnabled ? 'showing' : 'disabled';
+}
+
+function openFilm(link) {
+  const currentSelection = ++selection;
+  opener = link;
+  movie.pause();
+  filmOffset = Number(link.dataset.filmStart);
+  const file = link.href;
+  const base = file.slice(0, -'.mp4'.length);
+
+  title.textContent = link.dataset.filmTitle;
+  movie.setAttribute('aria-label', title.textContent);
+  movie.poster = link.dataset.poster || base + '.jpg';
+  directLink.href = file;
+  filmStatus.hidden = true;
+  showFilmTime(0);
+  dialog.showModal();
+  document.body.classList.add('screen-open');
+  closeButton.focus({preventScroll:true});
+
+  // A scene's first decoded frame is its actual in-point, including for direct links.
+  movie.src = file;
+  setCaptions(link.dataset.captions || base + '.vtt');
+  movie.load();
+  movie.play().catch(error => {
+    if (currentSelection !== selection || !dialog.open || error.name === 'AbortError') return;
+    if (error.name === 'NotAllowedError') showFilmStatus('Press play in the video controls to begin.');
+    else showFilmStatus('The video could not play here.');
+  });
+}
+
+for (const link of document.querySelectorAll('a[data-film-start]')) {
+  link.addEventListener('click', event => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || typeof dialog.showModal !== 'function') return;
+    event.preventDefault();
+    openFilm(link);
+  });
+}
+
+movie.addEventListener('timeupdate', () => {
+  if (dialog.open) showFilmTime(movie.currentTime);
+});
+movie.addEventListener('playing', () => { filmStatus.hidden = true; });
+movie.addEventListener('error', () => {
+  if (dialog.open && movie.error && movie.hasAttribute('src')) showFilmStatus('The video could not load here.');
+});
+closeButton.addEventListener('click', () => dialog.close());
+dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+dialog.addEventListener('close', () => {
+  if (dialog.open) return;
+  selection++;
+  captionsEnabled = movie.textTracks[0]?.mode === 'showing';
+  movie.pause();
+  movie.removeAttribute('src');
+  movie.replaceChildren();
+  movie.load();
+  document.body.classList.remove('screen-open');
+  opener?.focus({preventScroll:true});
+});
 
 async function localMedia(path) {
   const response = await fetch(path);
@@ -13,106 +96,6 @@ async function localMedia(path) {
   const bytes = await response.blob();
   return URL.createObjectURL(new Blob([bytes], {type:'video/mp4'}));
 }
-
-function fileCanSeek() {
-  rangeCapability ??= fetch(filmPath, {method:'HEAD'})
-    .then(response => /bytes/i.test(response.headers.get('Accept-Ranges') || ''))
-    .catch(() => false);
-  return rangeCapability;
-}
-
-function mediaEvent(element, name, timeout, action) {
-  return new Promise((resolve, reject) => {
-    const finish = ok => {
-      clearTimeout(timer);
-      element.removeEventListener(name, success);
-      element.removeEventListener('error', failure);
-      if (ok) resolve();
-      else reject(new Error('Media did not become ready.'));
-    };
-    const success = () => finish(true);
-    const failure = () => finish(false);
-    const timer = setTimeout(failure, timeout);
-    element.addEventListener(name, success, {once:true});
-    element.addEventListener('error', failure, {once:true});
-    try { action?.(); } catch { failure(); }
-  });
-}
-
-async function selectSource(src, ticket) {
-  if (ticket !== session) return false;
-  const absolute = new URL(src, document.baseURI).href;
-  if (movie.currentSrc !== absolute || movie.readyState < 1) {
-    await mediaEvent(movie, 'loadedmetadata', 18000, () => {
-      movie.src = absolute;
-      movie.load();
-    });
-  }
-  return ticket === session;
-}
-
-async function seekMovie(target, ticket) {
-  if (ticket !== session) return false;
-  if (Math.abs(movie.currentTime - target) <= .35) return true;
-  await mediaEvent(movie, 'seeked', 3000, () => { movie.currentTime = target; });
-  return ticket === session && Math.abs(movie.currentTime - target) <= .35;
-}
-
-async function openFilm(target, ticket) {
-  const current = () => ticket === session && dialog.open;
-  const status = message => {
-    if (!current()) return;
-    filmStatus.textContent = message;
-    filmStatus.hidden = false;
-  };
-  const cached = () => {
-    storedMovie ??= localMedia(filmPath).catch(error => { storedMovie = undefined; throw error; });
-    return storedMovie;
-  };
-  try {
-    if (target > 0) status('Opening the selected scene…');
-    let src = filmPath;
-    if (storedMovie || (target > 0 && !await fileCanSeek())) src = await cached();
-    if (!current() || !await selectSource(src, ticket)) return;
-    let positioned = false;
-    try { positioned = await seekMovie(target, ticket); } catch { /* A server can advertise ranges without honoring a seek. */ }
-    if (!current()) return;
-    if (!positioned) {
-      src = await cached();
-      if (!await selectSource(src, ticket)) return;
-      if (!await seekMovie(target, ticket)) throw new Error('Chapter unavailable.');
-    }
-    if (!current()) return;
-    filmStatus.hidden = true;
-    try { await movie.play(); }
-    catch { status('Press play in the video controls to begin.'); }
-  } catch {
-    status('The video could not load. You can download the 1080p film below the player.');
-  }
-}
-
-for (const link of document.querySelectorAll('[data-film-time]')) {
-  link.addEventListener('click', event => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || typeof dialog.showModal !== 'function') return;
-    event.preventDefault();
-    opener = link;
-    movie.pause();
-    filmStatus.hidden = true;
-    dialog.showModal();
-    document.body.classList.add('screen-open');
-    document.querySelector('#close-screen').focus({preventScroll:true});
-    openFilm(Number(link.dataset.filmTime), ++session);
-  });
-}
-document.querySelector('#close-screen').addEventListener('click', () => dialog.close());
-dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
-dialog.addEventListener('close', () => {
-  session++;
-  movie.pause();
-  document.body.classList.remove('screen-open');
-  opener?.focus({preventScroll:true});
-});
-movie.addEventListener('playing', () => { filmStatus.hidden = true; });
 
 const stage = document.querySelector('#rail-stage');
 const canvas = document.querySelector('#rail-canvas');
