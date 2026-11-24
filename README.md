@@ -1,5 +1,7 @@
 # One City May Hide Another
 
+[Watch the film and explore the railway](https://one-city-may-hide-another.flutedjoust3.chatgpt.site) · [Download the 1080p screening edition](https://github.com/qrran/one-city-may-hide-another/releases/tag/v1.0.0)
+
 ![Two subway cars overlap on the elevated line in Brooklyn.](media/poster.jpg)
 
 A 2 minute 52 second computational poetry film about a New York student on the way to class. A coffee vendor taps a cup twice. Somebody holds a brass door. The morning goes by a second time, and those gestures have time to register.
