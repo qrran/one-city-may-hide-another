@@ -14,6 +14,8 @@ Dan Lin developed the direction through conversation with ChatGPT. The drawings,
 
 The camera returns to the same elevated line three times. Move the pointer in the interactive railway set to find sightlines between two trains. The left and right arrow keys work when the canvas has keyboard focus. The slider moves both trains through the same 22-second sequence.
 
+The website also includes an imagined rainy street corner, an original interactive 3D extension of the poem's themes. Rotate or zoom the miniature to discover the commuter, clerk, rider and train passenger. The adjacent text offers four interpretations of the same instant. The concept artwork serves as a fallback when WebGL is unavailable.
+
 ## Run
 
 Use Node 22 or later, npm, and FFmpeg with H.264 and AAC support on your path. The project ships the voice takes, stereo mixes, fonts and rendered railway shot. The interactive WebGL scene uses the local Three.js installation.
@@ -26,6 +28,8 @@ npm run render        # out/One-City-May-Hide-Another.mp4
 ```
 
 `npm run bundle:rail` makes a self-contained HTML edition at `dist/NYC-Rail-Study.html`. Open it in a browser with WebGL 2. It also works offline.
+
+`npm run bundle:corner` rebuilds the street-corner module served by GitHub Pages from `src/corner-world.js`. The site itself is in `docs/`.
 
 ## How the film is made
 

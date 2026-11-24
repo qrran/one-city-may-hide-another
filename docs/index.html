@@ -4,13 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#101a18">
-  <meta name="description" content="Watch Dan Lin’s New York poetry film, then shift your viewpoint on the two trains in its interactive Brooklyn railway. A response to Kenneth Koch.">
+  <meta name="description" content="Watch Dan Lin’s New York poetry film, then explore two trains and a rainy street corner from different viewpoints. A response to Kenneth Koch.">
   <title>One City May Hide Another — A film by Dan Lin</title>
   <link rel="icon" href="assets/mark.png">
   <link rel="preload" as="image" href="assets/cover.webp">
   <link rel="preload" as="font" type="font/woff" href="assets/display.woff" crossorigin>
-  <link rel="stylesheet" href="screen.css?v=scene-files-2">
+  <link rel="stylesheet" href="screen.css?v=hidden-corner-1">
   <script type="module" src="screen.js?v=scene-files-2"></script>
+  <script type="module" src="corner.js?v=hidden-corner-1"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to film</a>
@@ -18,7 +19,7 @@
     <div class="wrap mast-inner">
       <a class="brand" href="#film" aria-label="Dan Lin, return to the film"><span class="emblem" aria-hidden="true"><i></i><i></i></span><span>Dan Lin</span></a>
       <nav aria-label="Main navigation">
-        <a href="#film">Film</a><a href="#railway">Rail study</a><a href="#reading">Reading</a>
+        <a href="#film">Film</a><a href="#railway">Rail study</a><a href="#corner">Street corner</a><a href="#reading">Reading</a>
       </nav>
     </div>
   </header>
@@ -77,6 +78,33 @@
         <noscript><p><a href="scenes/elevated-line.mp4">Watch the railway sequence in the film</a></p></noscript>
       </div>
     </section>
+    <section class="corner" id="corner" aria-labelledby="corner-title">
+      <div class="wrap">
+        <div class="corner-heading">
+          <div><p class="eyebrow">Interactive city study</p><h2 id="corner-title">One corner, <em>many lives.</em></h2></div>
+          <p>One rainy evening. One convenience store. Four people who experience the same place in completely different ways.</p>
+        </div>
+        <div class="corner-grid">
+          <figure class="corner-figure">
+            <div class="corner-stage" id="corner-stage">
+              <img id="corner-poster" src="assets/corner-concept.webp" width="1254" height="1254" loading="lazy" alt="A miniature rainy Japanese street corner with a glowing convenience store and an elevated train behind it.">
+              <canvas id="corner-canvas" tabindex="0" hidden aria-label="Interactive miniature of a rainy street corner. Drag to rotate, right drag to pan, scroll or pinch to zoom, or use arrow keys and plus or minus. Press Home to reset the view."></canvas>
+            </div>
+            <figcaption id="corner-hint">Drag to rotate · Right-drag to pan · Scroll or pinch to zoom. <span>Arrow keys, +/−, Home.</span></figcaption>
+          </figure>
+          <div class="corner-stories" aria-label="Four lives at the same street corner">
+            <p class="corner-intro">The film moves through one student's morning. This imagined street corner takes the same idea a step further: what happens when we stop moving long enough to see the other lives around us?</p>
+            <button class="corner-story" type="button" data-corner-view="commuter" aria-pressed="false" disabled><span class="story-dot commuter-dot" aria-hidden="true"></span><span><strong>The commuter</strong><span>For someone on the way home, the store is a brief shelter from the rain.</span></span></button>
+            <button class="corner-story" type="button" data-corner-view="clerk" aria-pressed="false" disabled><span class="story-dot clerk-dot" aria-hidden="true"></span><span><strong>The night-shift clerk</strong><span>For the person behind the counter, this small room is the workplace. The night is far from over.</span></span></button>
+            <button class="corner-story" type="button" data-corner-view="courier" aria-pressed="false" disabled><span class="story-dot courier-dot" aria-hidden="true"></span><span><strong>The delivery rider</strong><span>The wet streets are not simply scenery. They are part of the distance still to travel.</span></span></button>
+            <button class="corner-story" type="button" data-corner-view="passenger" aria-pressed="false" disabled><span class="story-dot passenger-dot" aria-hidden="true"></span><span><strong>The train passenger</strong><span>From the window of a passing train, the same store is only a moment of light.</span></span></button>
+            <p class="corner-note">The lives are imagined, but the differences are familiar. Turning the model does not change the place; it changes what we can see.</p>
+          </div>
+        </div>
+        <div class="corner-credit"><span>Rainy street study · Original concept and 3D interpretation</span><a href="assets/corner-concept.webp" target="_blank" rel="noopener">View concept artwork</a></div>
+        <noscript><p class="corner-note">The concept artwork is shown here; the rotatable scene requires JavaScript.</p></noscript>
+      </div>
+    </section>
     <section class="reading" id="reading" aria-labelledby="reading-title">
       <div class="wrap reading-grid">
         <div class="reading-head"><p class="eyebrow">Director’s note</p><h2 id="reading-title">A pause in <br>the line.</h2><p class="signature">Dan Lin</p></div>
@@ -87,6 +115,7 @@
           <p>For the student, the coffee cart is one stop on the way to class. For the vendor, that corner <em>is</em> the workday. When the light changes, the student can leave. The vendor is still there, making the next cup. What looks like one morning from the train window holds two very different ways of spending an hour.</p>
           <div class="reprise" aria-label="Compare the two visits to the coffee cart"><a href="scenes/coffee-cart.mp4" data-film-start="28" data-film-title="The coffee cart">First pass · 0:28</a><a href="scenes/coffee-cart-return.mp4" data-film-start="85" data-film-title="The coffee cart, second pass">Second pass · 1:25</a></div>
           <p>Later in the poem, Koch writes, “One injustice may hide another.” That line makes me imagine a glass lobby on a cold New York morning. An employee’s badge opens the door. Someone without a place to sleep might look at that same lobby and see somewhere warm to sit. They can stand on the same block and have a different city available to them.</p>
+          <p>The rainy street corner asks a similar question in a different setting. What feels like a brief stop for one person may be the center of another person's day. I wanted the act of rotating the scene to echo the act of rereading Koch: one view is never the whole story.</p>
           <p>The film never tells me who held the brass door or whether they can go inside. I like leaving that question open. The second look changes what I notice, even when it gives me no right to fill in the rest of a stranger’s life.</p>
           <a class="ink-link" href="https://poets.org/poem/one-train-may-hide-another">Read Kenneth Koch’s poem</a>
         </div>

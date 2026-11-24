@@ -11,6 +11,7 @@
     "rail": "node scripts/rail.mjs explore",
     "bake:rail": "node scripts/rail.mjs bake",
     "bundle:rail": "node scripts/rail.mjs bundle",
+    "bundle:corner": "esbuild src/corner-world.js --bundle --minify --format=esm --target=es2020 --legal-comments=inline --outfile=docs/assets/corner-engine.js",
     "sound": "python3 scripts/sound.py",
     "prerender": "npm run art",
     "render": "node scripts/render.mjs",
