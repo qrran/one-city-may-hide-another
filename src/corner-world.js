@@ -24,7 +24,7 @@ export function createCornerWorld(canvas,onFrame=()=>{}) {
   controls.target.set(0, 1.7, 0);
   controls.enableDamping = true;
   controls.dampingFactor = .085;
-  controls.minDistance = 14;
+  controls.minDistance = 6.5;
   controls.maxDistance = 55;
   controls.minPolarAngle = .24;
   controls.maxPolarAngle = Math.PI / 2.13;
@@ -290,11 +290,12 @@ export function createCornerWorld(canvas,onFrame=()=>{}) {
   drawRain(0);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced)controls.enableDamping=false;
-  let raf=0, last=0, visible=true, disposed=false;
+  let raf=0, last=0, visible=true, disposed=false, flight=null;
   const anchors={commuter:[.24,2.5,3.4],clerk:[-4.3,2.1,.22],courier:[3.74,1.93,-.22],passenger:[4.45,6.05,rz+.87]};
   function render() {controls.update();renderer.render(scene,camera);const points={};for(const [key,xyz] of Object.entries(anchors)){const p=new THREE.Vector3(...xyz).project(camera);points[key]={x:(p.x+1)/2,y:(1-p.y)/2,visible:p.z>=-1&&p.z<=1&&Math.abs(p.x)<.95&&Math.abs(p.y)<.95};}onFrame(points);}
-  function frame(t){raf=0;if(disposed||!visible||document.hidden)return;const dt=last?Math.min(.05,(t-last)/1000):0;last=t;if(!reduced)drawRain(dt);render();if(!reduced||controls.enableDamping)raf=requestAnimationFrame(frame);}
+  function frame(t){raf=0;if(disposed||!visible||document.hidden)return;const dt=last?Math.min(.05,(t-last)/1000):0;last=t;if(!reduced)drawRain(dt);if(flight){const p=Math.min(1,Math.max(0,(t-flight.start)/flight.duration)),ease=p*p*(3-2*p);camera.position.lerpVectors(flight.from,flight.to,ease);controls.target.lerpVectors(flight.fromTarget,flight.toTarget,ease);if(p===1)flight=null;}render();if(!reduced||controls.enableDamping||flight)raf=requestAnimationFrame(frame);}
   function start(){if(!raf&&visible&&!document.hidden&&!disposed){last=0;raf=requestAnimationFrame(frame);}}
+  controls.addEventListener('start',()=>{flight=null;});
   if(reduced)controls.addEventListener('change',start);
   function resize(){const {width,height}=canvas.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix();render();}
   const ro=new ResizeObserver(resize);ro.observe(canvas);resize();
@@ -302,6 +303,7 @@ export function createCornerWorld(canvas,onFrame=()=>{}) {
   function visibility(){if(document.hidden){cancelAnimationFrame(raf);raf=0;}else start();}document.addEventListener('visibilitychange',visibility);
   function keyboard(e) {
     if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-','Home'].includes(e.key))return;e.preventDefault();
+    flight=null;
     if(e.key==='Home'){controls.target.set(0,1.7,0);camera.position.set(24,21,26);controls.update();render();return;}
     const s=new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
     if(e.key==='ArrowLeft')s.theta-=.14;if(e.key==='ArrowRight')s.theta+=.14;
@@ -311,10 +313,18 @@ export function createCornerWorld(canvas,onFrame=()=>{}) {
   }
   canvas.addEventListener('keydown',keyboard);start();
   const looks={
-    commuter:{pos:[9,8.7,15],target:[.3,1.4,2.7]},
-    clerk:{pos:[-12,7,14],target:[-3.2,1.6,.8]},
-    courier:{pos:[16,7,5.8],target:[3.35,1.4,.1]},
-    passenger:{pos:[15,13,3],target:[1.4,4.7,-5.2]},
+    overview:{pos:[24,21,26],target:[0,1.7,0]},
+    commuter:{pos:[5,4.7,9.7],target:[.24,1.55,3.4]},
+    clerk:{pos:[-9,3.8,7],target:[-4.3,1.8,.22]},
+    courier:{pos:[10.5,3.55,2.8],target:[3.74,1.4,-.22]},
+    passenger:{pos:[9.4,8.5,-.1],target:[4.45,5.7,rz+.87]},
   };
-  return {lookAt(key){const view=looks[key];if(!view)return;controls.target.set(...view.target);camera.position.set(...view.pos);controls.update();render();},dispose(){disposed=true;cancelAnimationFrame(raf);ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('keydown',keyboard);controls.dispose();renderer.dispose();}};
+  function lookAt(key){
+    const view=looks[key];if(!view)return;
+    const to=new THREE.Vector3(...view.pos),toTarget=new THREE.Vector3(...view.target);
+    if(reduced){camera.position.copy(to);controls.target.copy(toTarget);render();return;}
+    flight={from:camera.position.clone(),fromTarget:controls.target.clone(),to,toTarget,start:performance.now(),duration:950};
+    start();
+  }
+  return {lookAt,dispose(){disposed=true;flight=null;cancelAnimationFrame(raf);ro.disconnect();io.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('keydown',keyboard);controls.dispose();renderer.dispose();}};
 }
