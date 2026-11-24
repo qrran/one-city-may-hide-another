@@ -14,7 +14,7 @@ Dan Lin developed the direction through conversation with ChatGPT. The drawings,
 
 The camera returns to the same elevated line three times. Move the pointer in the interactive railway set to find sightlines between two trains. The left and right arrow keys work when the canvas has keyboard focus. The slider moves both trains through the same 22-second sequence.
 
-The website also includes an imagined rainy street corner, an original interactive 3D extension of the poem's themes. Rotate or zoom the miniature to discover the commuter, clerk, rider and train passenger. The adjacent text offers four interpretations of the same instant. The concept artwork serves as a fallback when WebGL is unavailable.
+The website also includes an imagined Brooklyn coffee shop on a rainy evening, an original full-screen extension of the poem's themes. Four clickable markers reveal the commuter, barista, rider and train passenger in the illustration or the rotatable 3D model. The illustrated view remains interactive when WebGL is unavailable.
 
 ## Run
 
