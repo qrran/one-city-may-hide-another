@@ -1,51 +1,67 @@
-// Spotify's official player only. No extracted audio or account credentials.
+// Official YouTube release, embedded with visible controls and attribution.
 const toggle=document.querySelector('#music-toggle');
 const panel=document.querySelector('#music-panel');
 const close=document.querySelector('#music-close');
 const status=document.querySelector('#music-status');
+const host=document.querySelector('#youtube-player');
 const film=document.querySelector('#screening');
-const track='spotify:track:6SitvaVffWFtfATmX3iRT8';
-const embedUrl='https://open.spotify.com/embed/track/6SitvaVffWFtfATmX3iRT8';
-let api,controller,loading=false,ready=false,playing=false,wantsPlay=false,resumeAfterFilm=false, fallback=false;
+const videoId='-Ovr9zyafzs';
+const trackName='STUDY Café · Cafe Music BGM channel';
+let frame,player,playerReady=false,playing=false,resumeAfterFilm=false,apiRequested=false,generation=0;
 
-function fallbackPlayer(message='Press Play in the Spotify player to listen here.'){
-  fallback=true;ready=false;controller=undefined;
-  let host=document.querySelector('#spotify-player');if(!host){host=document.createElement('div');host.id='spotify-player';panel.insertBefore(host,status);}
-  if(host.tagName==='IFRAME'){const container=document.createElement('div');container.id='spotify-player';host.replaceWith(container);host=container;}
-  const iframe=document.createElement('iframe');iframe.src=embedUrl;iframe.title='Spotify: STUDY Café by Cafe Music BGM channel';iframe.width='100%';iframe.height='152';iframe.allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
-  if(!panel.hidden&&!film.open)host.replaceChildren(iframe);status.textContent=message;
+function updateLabel(){toggle.querySelector('.sound-label').textContent=playing?'Music on':'Music';}
+function unmount(){
+  generation++;playing=false;playerReady=false;updateLabel();
+  try{player?.destroy();}catch{}
+  player=undefined;frame=undefined;host.replaceChildren();
 }
-function ensurePlayer(){
-  if(controller||loading||fallback)return;
-  loading=true;
-  window.onSpotifyIframeApiReady=IFrameAPI=>{
-    api=IFrameAPI;
-    if(fallback)return;
-    try{api.createController(document.querySelector('#spotify-player'),{uri:track,width:'100%',height:152},c=>{
-      controller=c;loading=false;
-      c.addListener('ready',()=>{
-        ready=true;status.textContent='Press Play if your browser does not start the music automatically.';
-        if(wantsPlay&&!panel.hidden&&!film.open)c.play();
-      });
-      c.addListener('playback_update',event=>{
-        if(!event.data)return;playing=!event.data.isPaused&&!event.data.isBuffering;
-        toggle.querySelector('.sound-label').textContent=playing?'Music on':'Music';
-        if(playing){status.textContent='STUDY Café · Cafe Music BGM channel';if(film.open||panel.hidden)c.pause();}
-      });
-      c.addListener('playback_started',()=>{playing=true;status.textContent='STUDY Café · Cafe Music BGM channel';if(film.open||panel.hidden)c.pause();});
-    });}catch(error){loading=false;fallbackPlayer();}
-  };
-  const script=document.createElement('script');script.src='https://open.spotify.com/embed/iframe-api/v1';script.async=true;
-  script.addEventListener('error',()=>{loading=false;fallbackPlayer('Press Play in the official player. If it cannot load, use Spotify below.');});
+function bindPlayer(){
+  if(!frame||player||!window.YT?.Player)return;
+  const current=generation;
+  try{player=new YT.Player(frame,{
+    events:{
+      onReady:event=>{
+        if(current!==generation)return;playerReady=true;
+        if(panel.hidden||film.open){event.target.pauseVideo();return;}
+        event.target.setVolume(42);
+        status.textContent='Press Play if the music does not start automatically.';
+      },
+      onStateChange:event=>{
+        if(current!==generation)return;
+        playing=event.data===YT.PlayerState.PLAYING;updateLabel();
+        if(playing){status.textContent=trackName;if(film.open||panel.hidden)event.target.pauseVideo();}
+      },
+      onAutoplayBlocked:()=>{if(current===generation)status.textContent='Press Play on the YouTube player to start listening.';},
+      onError:()=>{if(current===generation){playing=false;updateLabel();status.textContent='YouTube cannot play the song in this browser. Use the official video link below.';}}
+    }
+  });}catch{status.textContent='Press Play in the official YouTube player.';}
+}
+function loadApi(){
+  if(window.YT?.Player){bindPlayer();return;}
+  if(apiRequested)return;apiRequested=true;
+  window.onYouTubeIframeAPIReady=bindPlayer;
+  const script=document.createElement('script');script.src='https://www.youtube.com/iframe_api';script.async=true;
+  script.addEventListener('error',()=>{apiRequested=false;status.textContent='Use the embedded player’s Play button.';});
   document.body.append(script);
-  setTimeout(()=>{if(!ready&&!fallback){loading=false;try{controller?.destroy();}catch{}if(!document.querySelector('#spotify-player')){const host=document.createElement('div');host.id='spotify-player';panel.insertBefore(host,status);}fallbackPlayer();}},10000);
 }
-function closePlayer(){wantsPlay=false;resumeAfterFilm=false;controller?.pause();playing=false;toggle.querySelector('.sound-label').textContent='Music';if(fallback)document.querySelector('#spotify-player')?.replaceChildren();panel.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open music player');}
-function openPlayer(){panel.hidden=false;toggle.setAttribute('aria-expanded','true');toggle.setAttribute('aria-label','Close music player');wantsPlay=true;if(fallback){fallbackPlayer();return;}ensurePlayer();if(ready&&!film.open)controller.play();}
-toggle.addEventListener('click',()=>{if(panel.hidden)openPlayer();else closePlayer();});
+function mount(autoplay=true){
+  if(frame||panel.hidden||film.open)return;
+  generation++;
+  frame=document.createElement('iframe');
+  const url=new URL(`https://www.youtube-nocookie.com/embed/${videoId}`);
+  for(const [key,value] of Object.entries({autoplay:autoplay?'1':'0',enablejsapi:'1',playsinline:'1',origin:location.origin,loop:'1',playlist:videoId,rel:'0'}))url.searchParams.set(key,value);
+  frame.src=url.href;frame.title='STUDY Café by Cafe Music BGM channel — YouTube';
+  frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;
+  frame.referrerPolicy='strict-origin-when-cross-origin';
+  host.replaceChildren(frame);status.textContent=trackName;
+  loadApi();
+}
+function closePlayer(){resumeAfterFilm=false;unmount();panel.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open music player');}
+function openPlayer(){panel.hidden=false;toggle.setAttribute('aria-expanded','true');toggle.setAttribute('aria-label','Close music player');mount(true);}
+toggle.addEventListener('click',()=>panel.hidden?openPlayer():closePlayer());
 close.addEventListener('click',()=>{closePlayer();toggle.focus();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden&&!film.open){closePlayer();toggle.focus();}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden&&!film.open){closePlayer();toggle.focus();}});
 new MutationObserver(()=>{
-  if(film.open){resumeAfterFilm=playing;if(controller)controller.pause();else if(fallback)document.querySelector('#spotify-player')?.replaceChildren();}
-  else if(!panel.hidden){if(controller&&resumeAfterFilm)controller.resume();else if(fallback)fallbackPlayer();resumeAfterFilm=false;}
+  if(film.open){resumeAfterFilm=playing;if(playerReady)player.pauseVideo();else unmount();}
+  else if(!panel.hidden){if(playerReady&&resumeAfterFilm)player.playVideo();else if(!frame)mount(false);resumeAfterFilm=false;}
 }).observe(film,{attributes:true,attributeFilter:['open']});
