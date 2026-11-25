@@ -1,7 +1,7 @@
 // Official YouTube release, embedded with visible controls and attribution.
 const toggle=document.querySelector('#music-toggle');
 const panel=document.querySelector('#music-panel');
-const close=document.querySelector('#music-close');
+const sizeButton=document.querySelector('#music-size');
 const status=document.querySelector('#music-status');
 const host=document.querySelector('#youtube-player');
 const film=document.querySelector('#screening');
@@ -56,11 +56,16 @@ function mount(autoplay=true){
   host.replaceChildren(frame);status.textContent=trackName;
   loadApi();
 }
-function closePlayer(){resumeAfterFilm=false;unmount();panel.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open music player');}
-function openPlayer(){panel.hidden=false;toggle.setAttribute('aria-expanded','true');toggle.setAttribute('aria-label','Close music player');mount(true);}
+function setCompact(compact){
+  panel.classList.toggle('is-compact',compact);
+  const action=compact?'Expand music player':'Minimize music player';
+  sizeButton.textContent=compact?'＋':'−';sizeButton.title=action;sizeButton.setAttribute('aria-label',action);sizeButton.setAttribute('aria-expanded',String(!compact));
+}
+function closePlayer(){resumeAfterFilm=false;unmount();panel.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Open music player');toggle.title='Play STUDY Café';}
+function openPlayer(){setCompact(true);panel.hidden=false;toggle.setAttribute('aria-expanded','true');toggle.setAttribute('aria-label','Stop music playback');toggle.title='Stop music playback';mount(true);}
 toggle.addEventListener('click',()=>panel.hidden?openPlayer():closePlayer());
-close.addEventListener('click',()=>{closePlayer();toggle.focus();});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden&&!film.open){closePlayer();toggle.focus();}});
+sizeButton.addEventListener('click',()=>setCompact(!panel.classList.contains('is-compact')));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden&&!film.open&&!panel.classList.contains('is-compact'))setCompact(true);});
 new MutationObserver(()=>{
   if(film.open){resumeAfterFilm=playing;if(playerReady)player.pauseVideo();else unmount();}
   else if(!panel.hidden){if(playerReady&&resumeAfterFilm)player.playVideo();else if(!frame)mount(false);resumeAfterFilm=false;}
