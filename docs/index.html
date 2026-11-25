@@ -9,18 +9,25 @@
   <link rel="icon" href="assets/mark.png">
   <link rel="preload" as="image" href="assets/cover.webp">
   <link rel="preload" as="font" type="font/woff" href="assets/display.woff" crossorigin>
-  <link rel="stylesheet" href="screen.css?v=brooklyn-coffee-2">
-  <script type="module" src="screen.js?v=scene-files-2"></script>
+  <link rel="stylesheet" href="screen.css?v=field-notes-1">
+  <script type="module" src="screen.js?v=field-notes-1"></script>
   <script type="module" src="corner.js?v=brooklyn-coffee-2"></script>
+  <script type="module" src="ambience.js?v=field-notes-1"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to film</a>
   <header class="mast">
     <div class="wrap mast-inner">
-      <a class="brand" href="#film" aria-label="Dan Lin, return to the film"><span class="emblem" aria-hidden="true"><i></i><i></i></span><span>Dan Lin</span></a>
-      <nav aria-label="Main navigation">
-        <a href="#film">Film</a><a href="#railway">Rail study</a><a href="#corner">Coffee shop</a><a href="#reading">Reading</a>
-      </nav>
+      <div class="brand-block">
+        <a class="brand" href="#film" aria-label="Dan Lin, return to the film"><span class="emblem" aria-hidden="true"><i></i><i></i></span><span>Dan Lin</span></a>
+        <p class="course-credit">26FA <span>·</span> Final Project <span>·</span> Modern British &amp; American Poetry <span>·</span> Prof. Dickman</p>
+      </div>
+      <div class="mast-actions">
+        <nav aria-label="Main navigation">
+          <a href="#film">Film</a><a href="#railway">Rail study</a><a href="#corner">Coffee shop</a><a href="#poem">Poem</a><a href="#reading">Reading</a>
+        </nav>
+        <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn ambient sound on" title="Turn ambient sound on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path class="sound-waves" d="M16 9c1.8 1.7 1.8 4.3 0 6m3-9c3.5 3.4 3.5 8.6 0 12" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/><path class="sound-slash" d="m16 8 6 8m0-8-6 8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="sound-label">Sound off</span></button>
+      </div>
     </div>
   </header>
   <main id="main">
@@ -99,6 +106,17 @@
         <noscript><p class="corner-noscript">This artwork shows four lives in the same imagined Brooklyn street corner. Enable JavaScript to reveal their stories and explore the model.</p></noscript>
       </div>
     </section>
+    <section class="poem-section" id="poem" aria-labelledby="poem-title">
+      <div class="wrap poem-grid">
+        <div class="poem-head"><p class="eyebrow">The source poem</p><h2 id="poem-title">One Train<br>May Hide<br><em>Another.</em></h2><p class="poem-author">Kenneth Koch</p><p class="poem-attribution">Selected opening lines · English original</p></div>
+        <div class="poem-copy">
+          <blockquote class="poem-excerpt"><p>In a poem, one line may hide another line,<br>As at a crossing, one train may hide another train.</p><cite>— Kenneth Koch, <em>One Train May Hide Another</em></cite></blockquote>
+          <p>Koch begins with a simple warning at a railway crossing: what is immediately visible may conceal something else. He carries that observation into the act of reading, then into our relationships and the ways we perceive the world.</p>
+          <p>The poem invites us to pause before assuming we have seen everything. That pause becomes the organizing idea of the film and the interactive city studies on this site.</p>
+          <a class="ink-link" href="#reading">Continue to the director’s note</a>
+        </div>
+      </div>
+    </section>
     <section class="reading" id="reading" aria-labelledby="reading-title">
       <div class="wrap reading-grid">
         <div class="reading-head"><p class="eyebrow">Director’s note</p><h2 id="reading-title">A pause in <br>the line.</h2><p class="signature">Dan Lin</p></div>
@@ -111,7 +129,7 @@
           <p>Later in the poem, Koch writes, “One injustice may hide another.” That line makes me imagine a glass lobby on a cold New York morning. An employee’s badge opens the door. Someone without a place to sleep might look at that same lobby and see somewhere warm to sit. They can stand on the same block and have a different city available to them.</p>
           <p>The rainy Brooklyn coffee shop asks a similar question in a single place. What feels like a brief stop for one person may be the center of another person's day. I wanted the act of exploring the scene to echo the act of rereading Koch: one view is never the whole story.</p>
           <p>The film never tells me who held the brass door or whether they can go inside. I like leaving that question open. The second look changes what I notice, even when it gives me no right to fill in the rest of a stranger’s life.</p>
-          <a class="ink-link" href="https://poets.org/poem/one-train-may-hide-another">Read Kenneth Koch’s poem</a>
+          <a class="ink-link" href="#poem">Return to the source poem</a>
         </div>
       </div>
     </section>

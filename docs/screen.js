@@ -1,3 +1,8 @@
+const mast = document.querySelector('.mast');
+if(mast&&'ResizeObserver' in window){
+  const updateMastHeight=()=>document.documentElement.style.setProperty('--mast-actual',`${Math.ceil(mast.getBoundingClientRect().height)}px`);
+  new ResizeObserver(updateMastHeight).observe(mast);updateMastHeight();
+}
 const dialog = document.querySelector('#screening');
 const movie = document.querySelector('#movie');
 const title = document.querySelector('#screen-title');
