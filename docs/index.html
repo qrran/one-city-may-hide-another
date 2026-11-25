@@ -9,10 +9,11 @@
   <link rel="icon" href="assets/mark.png">
   <link rel="preload" as="image" href="assets/cover.webp">
   <link rel="preload" as="font" type="font/woff" href="assets/display.woff" crossorigin>
-  <link rel="stylesheet" href="screen.css?v=field-notes-1">
+  <link rel="stylesheet" href="screen.css?v=cafe-music-1">
   <script type="module" src="screen.js?v=field-notes-1"></script>
   <script type="module" src="corner.js?v=brooklyn-coffee-2"></script>
-  <script type="module" src="ambience.js?v=field-notes-1"></script>
+  <script type="module" src="ambience.js?v=cafe-music-1"></script>
+  <script type="module" src="cafe-music.js?v=cafe-music-1"></script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to film</a>
@@ -26,10 +27,20 @@
         <nav aria-label="Main navigation">
           <a href="#film">Film</a><a href="#railway">Rail study</a><a href="#corner">Coffee shop</a><a href="#poem">Poem</a><a href="#reading">Reading</a>
         </nav>
-        <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn ambient sound on" title="Turn ambient sound on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path class="sound-waves" d="M16 9c1.8 1.7 1.8 4.3 0 6m3-9c3.5 3.4 3.5 8.6 0 12" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/><path class="sound-slash" d="m16 8 6 8m0-8-6 8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="sound-label">Sound off</span></button>
+        <div class="audio-actions">
+          <button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn rain sound on" title="Turn rain sound on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13a4.6 4.6 0 0 1-.1-9.2 6.2 6.2 0 0 1 11.7 2A3.7 3.7 0 1 1 19.3 13H5Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m7 16-1.5 3m6-3-1.5 3m6-3-1.5 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span class="sound-label">Rain off</span></button>
+          <button class="sound-toggle music-toggle" id="music-toggle" type="button" aria-expanded="false" aria-controls="music-panel" aria-label="Open music player" title="Play STUDY Café"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17V5l11-2v12M9 8l11-2" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/><ellipse cx="6.5" cy="18" rx="2.6" ry="2.1" fill="currentColor"/><ellipse cx="17.5" cy="16" rx="2.6" ry="2.1" fill="currentColor"/></svg><span class="sound-label">Music</span></button>
+        </div>
       </div>
     </div>
   </header>
+  <aside class="music-panel" id="music-panel" hidden aria-label="Music player">
+    <div class="music-panel-head"><p class="eyebrow">Now listening</p><button type="button" id="music-close" aria-label="Close music player">×</button></div>
+    <div id="spotify-player"></div>
+    <p id="music-status" role="status">Loading the official Spotify player…</p>
+    <a class="music-source" href="https://open.spotify.com/track/6SitvaVffWFtfATmX3iRT8" target="_blank" rel="noopener noreferrer">Open STUDY Café on Spotify</a>
+    <p class="music-privacy">Spotify provides this player and may use cookies. <a href="https://www.spotify.com/legal/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy policy</a>.</p>
+  </aside>
   <main id="main">
     <section class="cover" id="film" aria-labelledby="title">
       <div class="poster-art" aria-hidden="true"></div>

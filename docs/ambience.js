@@ -57,15 +57,15 @@ function sync(){
   const atCoffee=c.top<=centre&&c.bottom>=centre,afterCoffee=p.top<=centre;
   // No ambience over the film's carefully mixed narration and sound score.
   setGain(master,enabled && !screening.open && !document.hidden ? .45 : 0,.35);
-  setGain(cityGain,atCoffee ? .12 : afterCoffee ? .18 : .52,.7);
-  setGain(rainGain,atCoffee ? .73 : afterCoffee ? .28 : .12,.7);
+  setGain(cityGain,0,.7);
+  setGain(rainGain,atCoffee ? .30 : afterCoffee ? .16 : .18,.7);
 }
 function schedule(){if(!scheduled){scheduled=true;requestAnimationFrame(sync);}}
-function updateButton(){toggle.setAttribute('aria-pressed',String(enabled));label.textContent=enabled?'Sound on':'Sound off';const title=enabled?'Turn ambient sound off':'Turn ambient sound on';toggle.setAttribute('aria-label',title);toggle.title=title;}
+function updateButton(){toggle.setAttribute('aria-pressed',String(enabled));label.textContent=enabled?'Rain on':'Rain off';const title=enabled?'Turn rain sound off':'Turn rain sound on';toggle.setAttribute('aria-label',title);toggle.title=title;}
 toggle.addEventListener('click',async()=>{
   toggle.disabled=true;
   try{if(!context)initialize();if(context.state!=='running')await context.resume();enabled=!enabled;updateButton();sync();}
-  catch(error){enabled=false;updateButton();label.textContent='Sound unavailable';toggle.setAttribute('aria-label','Ambient sound unavailable');console.warn('Ambient sound unavailable',error);}
+  catch(error){enabled=false;updateButton();label.textContent='Rain unavailable';toggle.setAttribute('aria-label','Rain sound unavailable');console.warn('Rain sound unavailable',error);}
   finally{toggle.disabled=false;}
 });
 window.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',schedule);document.addEventListener('visibilitychange',sync);
